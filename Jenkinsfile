@@ -16,47 +16,32 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh '''
-                    #!/bin/bash
-                    source $VENV/bin/activate
-                    pip install -r requirements.txt
-                    '''
+                    sh '. $VENV/bin/activate && pip install -r requirements.txt'
                 }
             }
         }
         stage('Build') {
             steps {
                 echo 'Building the Project...'
-                sh '''
-                #!/bin/bash
-                source $VENV/bin/activate
-                python -c "print(\\"Dummy build step executed\\")"
-                '''
+                sh '. $VENV/bin/activate && python setup.py build'
             }
         }
         stage('Test') {
             steps {
                 echo 'Running Tests...'
-                sh '''
-                #!/bin/bash
-                source $VENV/bin/activate
-                pytest -v
-                '''
+                sh '. $VENV/bin/activate && pytest -v'
             }
         }
         stage('Lint') {
             steps {
                 echo 'Linting the Code...'
-                sh '''
-                #!/bin/bash
-                source $VENV/bin/activate
-                pylint **/*.py
-                '''
+                sh '. $VENV/bin/activate && pylint **/*.py'
             }
         }
         stage('Report') {
             steps {
                 echo 'Generating Reports...'
+                // Simulasikan generasi laporan atau gunakan plugin yang sesuai
                 sh 'echo "Reports generated"'
             }
         }
@@ -64,7 +49,6 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
-            sh 'deactivate'
             cleanWs()
         }
         success {
@@ -72,6 +56,8 @@ pipeline {
         }
         failure {
             echo 'Build failed!'
+            // Tambahkan langkah untuk mengirim notifikasi jika perlu
         }
     }
 }
+
