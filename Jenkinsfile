@@ -16,26 +16,42 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    sh 'source $VENV/bin/activate && pip install -r requirements.txt'
+                    sh '''
+                    #!/bin/bash
+                    source $VENV/bin/activate
+                    pip install -r requirements.txt
+                    '''
                 }
             }
         }
         stage('Build') {
             steps {
                 echo 'Building the Project...'
-                sh 'source $VENV/bin/activate && python -c "print(\\"Dummy build step executed\\")"'
+                sh '''
+                #!/bin/bash
+                source $VENV/bin/activate
+                python -c "print(\\"Dummy build step executed\\")"
+                '''
             }
         }
         stage('Test') {
             steps {
                 echo 'Running Tests...'
-                sh 'source $VENV/bin/activate && pytest -v'
+                sh '''
+                #!/bin/bash
+                source $VENV/bin/activate
+                pytest -v
+                '''
             }
         }
         stage('Lint') {
             steps {
                 echo 'Linting the Code...'
-                sh 'source $VENV/bin/activate && pylint **/*.py'
+                sh '''
+                #!/bin/bash
+                source $VENV/bin/activate
+                pylint **/*.py
+                '''
             }
         }
         stage('Report') {
@@ -48,6 +64,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up...'
+            sh 'deactivate'
             cleanWs()
         }
         success {
